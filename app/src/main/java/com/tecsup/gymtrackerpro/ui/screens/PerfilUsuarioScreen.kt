@@ -43,17 +43,28 @@ fun PerfilUsuarioScreen(navController: NavController, usuarioId: Int) {
         ?.joinToString("") ?: ""
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Mi perfil", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        "MI PERFIL",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2244AA),
-                    titleContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         }
@@ -62,7 +73,7 @@ fun PerfilUsuarioScreen(navController: NavController, usuarioId: Int) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -70,31 +81,53 @@ fun PerfilUsuarioScreen(navController: NavController, usuarioId: Int) {
             // Avatar circular con iniciales
             Box(
                 modifier = Modifier
-                    .size(80.dp)
-                    .background(Color(0xFFBBCCEE), CircleShape),
+                    .size(100.dp)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(iniciales, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2244AA))
+                Text(
+                    iniciales,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(usuario?.nombre ?: "", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text("@${usuario?.email?.substringBefore("@") ?: ""}", color = Color.Gray, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                usuario?.nombre ?: "",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                "@${usuario?.email?.substringBefore("@") ?: ""}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary
+            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // Stats
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                StatCard2(label = "Rutinas", value = totalRutinas.toString(), modifier = Modifier.weight(1f))
-                StatCard2(label = "kg totales", value = String.format("%.0f", volumenTotal), modifier = Modifier.weight(1f))
+                StatCard2(
+                    label = "Rutinas",
+                    value = totalRutinas.toString(),
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard2(
+                    label = "kg totales",
+                    value = String.format("%.0f", volumenTotal),
+                    modifier = Modifier.weight(1f)
+                )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Info rows
             PerfilInfoRow(icon = Icons.Default.Email, label = "Email", value = usuario?.email ?: "")
@@ -103,21 +136,30 @@ fun PerfilUsuarioScreen(navController: NavController, usuarioId: Int) {
             Spacer(modifier = Modifier.weight(1f))
 
             // Cerrar sesión
-            OutlinedButton(
+            Button(
                 onClick = {
                     navController.navigate("login") {
                         popUpTo("login") { inclusive = true }
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color.Red),
-                shape = RoundedCornerShape(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFEF5350),
+                    contentColor = Color.White
+                ),
+                shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Cerrar sesión")
+                Text(
+                    "CERRAR SESIÓN",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -127,14 +169,28 @@ fun StatCard2(label: String, value: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F4FF))
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(value, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2244AA))
-            Text(label, fontSize = 12.sp, color = Color.Gray)
+            Text(
+                value,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary
+            )
         }
     }
 }
@@ -142,12 +198,29 @@ fun StatCard2(label: String, value: String, modifier: Modifier = Modifier) {
 @Composable
 fun PerfilInfoRow(icon: ImageVector, label: String, value: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(label, color = Color.Gray, fontSize = 14.sp, modifier = Modifier.weight(1f))
-        Text(value, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }

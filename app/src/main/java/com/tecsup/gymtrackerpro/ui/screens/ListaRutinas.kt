@@ -1,8 +1,10 @@
 package com.tecsup.gymtrackerpro.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -32,48 +34,85 @@ fun ListaRutinasScreen(navController: NavController, usuarioId: Int) {
     var rutinaAEliminar by remember { mutableStateOf<Rutina?>(null) }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Mis rutinas", fontWeight = FontWeight.Bold) },
+                title = { 
+                    Text(
+                        "MIS RUTINAS", 
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack, 
+                            contentDescription = "Volver", 
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color.White)
+                        Icon(
+                            Icons.Default.Search, 
+                            contentDescription = "Buscar", 
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2244AA),
-                    titleContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("agregar/$usuarioId") },
-                containerColor = Color(0xFF2244AA)
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = CircleShape
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Nueva rutina", tint = Color.White)
+                Icon(Icons.Default.Add, contentDescription = "Nueva rutina")
             }
         }
     ) { padding ->
         if (rutinas.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding), 
+                contentAlignment = Alignment.Center
+            ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.FitnessCenter, contentDescription = null, modifier = Modifier.size(64.dp), tint = Color.LightGray)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("No tienes rutinas aún", color = Color.Gray)
-                    Text("Toca + para agregar una", color = Color.Gray)
+                    Icon(
+                        Icons.Default.FitnessCenter, 
+                        contentDescription = null, 
+                        modifier = Modifier.size(80.dp), 
+                        tint = MaterialTheme.colorScheme.surface
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        "No tienes rutinas aún", 
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        "Toca + para agregar una", 
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(rutinas, key = { it.id }) { rutina ->
                     RutinaCard(
@@ -89,24 +128,40 @@ fun ListaRutinasScreen(navController: NavController, usuarioId: Int) {
     rutinaAEliminar?.let { rutina ->
         AlertDialog(
             onDismissRequest = { rutinaAEliminar = null },
-            title = { Text("Eliminar rutina") },
-            text = { Text("¿Estás seguro de que deseas eliminar \"${rutina.nombre}\"?") },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { 
+                Text(
+                    "Eliminar rutina", 
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                ) 
+            },
+            text = { 
+                Text(
+                    "¿Estás seguro de que deseas eliminar \"${rutina.nombre}\"?",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ) 
+            },
             confirmButton = {
                 TextButton(onClick = {
                     scope.launch { db.rutinaDao().eliminar(rutina) }
                     rutinaAEliminar = null
-                }) { Text("Eliminar", color = Color.Red) }
+                }) { 
+                    Text("ELIMINAR", color = Color(0xFFEF5350), fontWeight = FontWeight.Bold) 
+                }
             },
             dismissButton = {
-                TextButton(onClick = { rutinaAEliminar = null }) { Text("Cancelar") }
+                TextButton(onClick = { rutinaAEliminar = null }) { 
+                    Text("CANCELAR", color = MaterialTheme.colorScheme.primary) 
+                }
             }
         )
     }
 }
 
 val categoryColors = listOf(
-    Color(0xFF2196F3), Color(0xFF4CAF50), Color(0xFFE91E63),
-    Color(0xFFFF9800), Color(0xFF9C27B0), Color(0xFF00BCD4)
+    Color(0xFF64B5F6), Color(0xFF81C784), Color(0xFFF06292),
+    Color(0xFFFFB74D), Color(0xFFBA68C8), Color(0xFF4DD0E1)
 )
 
 @Composable
@@ -115,30 +170,61 @@ fun RutinaCard(rutina: Rutina, onEdit: () -> Unit, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.padding(16.dp), 
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(4.dp, 40.dp)
+                    .background(categoryColor, RoundedCornerShape(2.dp))
+            )
+            Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(rutina.nombre, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Text(
+                    rutina.nombre, 
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Text(
                     rutina.ejercicio,
                     color = categoryColor,
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "${rutina.series} series × ${rutina.repeticiones} reps · ${rutina.pesoKg} kg · ${rutina.fecha}",
+                    "${rutina.series} series × ${rutina.repeticiones} reps · ${rutina.pesoKg} kg",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Text(
+                    rutina.fecha,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
                 )
             }
             IconButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color(0xFF2244AA))
+                Icon(
+                    Icons.Default.Edit, 
+                    contentDescription = "Editar", 
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = Color.Red)
+                Icon(
+                    Icons.Default.Delete, 
+                    contentDescription = "Eliminar", 
+                    tint = Color(0xFFEF5350),
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
     }
